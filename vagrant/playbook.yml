@@ -1,9 +1,8 @@
 ---
 - hosts: default
-  remote_user: root
   become: true
+  become_user: root
   vars:
-    timezone: "Europe/Vienna"
     virtualenv_path: ~vagrant/env
     workdir: ~vagrant/hostdir
   tasks:
@@ -14,8 +13,9 @@
 
 # -------- environment ---------------------------------------
   - name: ensure OS environment
-    apt: name={{ item }} state=present install_recommends=no
-    with_items:
+    apt: name={{packages}} state=present install_recommends=no
+    vars:
+      packages:
       - build-essential
       - python
       - python-setuptools
@@ -36,8 +36,9 @@
     become_user: vagrant
 
   - name: install Python packages
-    pip: name={{ item }} virtualenv={{ virtualenv_path }} virtualenv_command=pyvenv-3.5
-    with_items:
+    pip: name={{packages}} virtualenv={{ virtualenv_path }} virtualenv_command=pyvenv-3.5
+    vars:
+      packages:
       - click
       - jsonschema
       - wheel
